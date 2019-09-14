@@ -3,22 +3,16 @@
 # License: The MIT License -- https://opensource.org/licenses/MIT
 
 import base64, os
-from flask import Flask, request, redirect
+from flask import Flask, request, render_template, redirect
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients, Document, RecipientViewRequest
 
-# Settings
-# Fill in these constants
-#
-# Obtain an OAuth access token from https://developers.docusign.com/oauth-token-generator
 access_token = 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQoAAAABAAUABwAAQ5L0RDnXSAgAAIO1Aog510gCAF2HtnaajrlMjQ0RXfHzPDgVAAEAAAAYAAkAAAAFAAAAKwAAAC0AAAAvAAAAMQAAADIAAAA4AAAAMwAAADUAAAANACQAAABmMGYyN2YwZS04NTdkLTRhNzEtYTRkYS0zMmNlY2FlM2E5NzgSAAEAAAALAAAAaW50ZXJhY3RpdmUwAAC8_vBEOddINwD3KgqJBxtrQqmUr5Q_z5s7.wzFlaQ0oMUqPxz2XTQ0wX9-tHkJuyPdCeG5BDznU4rf0cEOkPomHBXtYqujsPBlQ-cS2zDAmZrL_Ebf77Rwu4An79WN4UHyDPoBKJFz47Renw4HeI9_fqOdu1P-6i3jv8MIAHwAmiWfTD9Vc_duOVo458s6dB3hG6Zf6qK64p6O078X7puZra2H2tZXSwMLh0hETUY3OiW9moxQSl9o6BWog094UPEgoF1KF9jOTmAuttRy_7ybppQoZj3-6Hpx3yTAIpJy6_pyVdN5Fp5Csw982bgEuI74TwhAAniimfu6Z-ZjZo1fcd5UfxIhRpKQSGtj-7uBke_t7KHzm-Zmlig'
-# Obtain your accountId from demo.docusign.com -- the account id is shown in the drop down on the
-# upper right corner of the screen by your picture or the default picture. 
 account_id = '8998993'
 # Recipient Information:
 signer_name = 'Rafael'
 signer_email = 'patrick.d.kao@gmail.com'
 # The document you wish to send. Path is relative to the root directory of this repo.
-file_name_path = 'demo_documents/World_Wide_Corp_lorem.pdf'
+file_name_path = 'documents/resignation.pdf'
 # The url of this web application
 base_url = 'http://localhost:5000'
 client_user_id = '123' # Used to indicate that the signer will use an embedded
@@ -54,7 +48,7 @@ def embedded_signing_ceremony():
     with open(os.path.join(APP_PATH, file_name_path), "rb") as file:
         content_bytes = file.read()
     base64_file_content = base64.b64encode(content_bytes).decode('ascii')
-
+    
     # Create the document model
     document = Document( # create the DocuSign document object 
         document_base64 = base64_file_content, 
@@ -115,6 +109,21 @@ def embedded_signing_ceremony():
     #
     return results.url
 
+def map(tag):
+    switch(tag):
+        case "sex_offender":
+            return ["Jeff Epstein"]
+        case "racists":
+            return ["Alfred Sloan"]
+        case "fossil_fuels":
+            return ["David Koch", "Charles Koch"]
+        case "rich_assholes":
+            return ["Jeff Bezos"]
+        case "war_criminals":
+            return ["Henry Kisinger"]
+def search(keyword):
+    return 0
+
 
 # Mainline
 app = Flask(__name__)
@@ -124,12 +133,7 @@ def homepage():
     if request.method == 'POST':
         return redirect(embedded_signing_ceremony(), code=302)
     else:
-        return '''
-            <html lang="en"><body><form action="{url}" method="post">
-            <input type="submit" value="Sign the document!"
-                style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
-            </form></body>
-        '''.format(url=request.url)
+        return render_template("home.html", url=request.url)
 @app.route('/dsreturn', methods=['GET'])
 def dsreturn():
     return '''
