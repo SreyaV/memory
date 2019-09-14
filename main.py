@@ -23,6 +23,8 @@ authentication_method = 'None' # How is this application authenticating
 # The API base_path
 base_path = 'https://demo.docusign.net/restapi'
 
+import os 
+
 # Set FLASK_ENV to development if it is not already set
 if 'FLASK_ENV' not in os.environ:
     os.environ['FLASK_ENV'] = 'development'
