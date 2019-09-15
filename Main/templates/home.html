@@ -107,25 +107,29 @@ form.example::after {
 <body>
 
   <div class="navbar">
+      <a href=".">Home</a>
     <a href="./resign">Sign Resignation Letter</a>
   <div class="dropdown">
     <button class="dropbtn">Make Someone Else Resign Intead!
       <i class="fa fa-caret-down"></i>
     </button>
     <div class="dropdown-content">
-      <a class="cs_top_menu_item" href="./generic_resign/Joi/Ito">Joi Ito</a>
-      <a class="cs_top_menu_item" href="./generic_resign/Seth/Lloyd">Seth Lloyd</a>
-      <a class="cs_top_menu_item" href="./generic_resign/Richard/Stallman}">Richard Stallman</a>
-      <a class="cs_top_menu_item" href="./generic_resign/Robert/Millard}">Robert Millard</a>
+      <a class="cs_top_menu_item" href="./generic_resign?Joi+Ito">Joi Ito</a>
+      <a class="cs_top_menu_item" href="./generic_resign?Seth+Lloyd">Seth Lloyd</a>
+      <a class="cs_top_menu_item" href="./generic_resign?Richard+Stallman}">Richard Stallman</a>
+      <a class="cs_top_menu_item" href="./generic_resign?Robert+Millard}">Robert Millard</a>
     </div>
   </div>
 </div>
 <br>
-<form class="example" action="search">
+<form class="example" action="/search">
   <input type="text" placeholder="Search.." name="keyword">
   <button type="submit"><i class="fa fa-search"></i></button>
 </form>
-Tags: <a href="">Sex Offenders</a>, <a href="">Racists</a>, <a href="">Fossil Fuels</a>, <a href=""> War Criminals </a>
+Tags: <a href="./search?keyword=Epstein+Cosby+Turner+Trump+Bush+Weinstein+Weiner">Sex Offenders</a>,
+  <a href="./search?keyword=Trump+Sloan+Pence">Racists</a>,
+  <a href="./search?keyword=Koch+Pruett+Culpepper+Woods">Fossil Fuels</a>,
+  <a href="./search?keyword=Kisinger+Schwarzman+Cheney"> War Criminals </a>
 
 
 {% if search|length > 0%}

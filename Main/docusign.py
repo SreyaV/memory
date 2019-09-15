@@ -131,7 +131,7 @@ def search(keywords):
             if matches is not None:
                 matched_documents.append((word, matches))
 
-    return matched_documents
+    return matched_documents, raw_text[1]
 
 def search_all():
     all_keys = []
@@ -220,11 +220,12 @@ def dsreturn():
 def keyword():
     keywords = request.args.get('keyword')
     print("searching for {}".format(keywords))
-    found_keys = search(keywords)
+    found_keys = search(keywords.split(' '))
+
     if len(found_keys) == 0:
         return render_template("home.html", search=keywords, found_docs="")
     else:
-        return render_template("home.html", search=keywords, found_docs=str(found_keys))
+        return render_template("home.html", search=keywords, found_docs="{}".format(found_keys[1][1]))
 
 # @app.route('/checkall', methods=['GET', 'POST'])
 # def checkall():
