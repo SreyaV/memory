@@ -4,10 +4,14 @@
 
 import base64, os
 from flask import Flask, request, render_template, redirect
-from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients, Document, RecipientViewRequest
+from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients, Document, \
+    RecipientViewRequest
+import get_documents
+import re
 
 access_token = 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQoAAAABAAUABwCA1c9ejznXSAgAgBXzbNI510gCAMvVYBwvyIxFgkVCFpMeHV8VAAEAAAAYAAkAAAAFAAAAKwAAAC0AAAAvAAAAMQAAADIAAAA4AAAAMwAAADUAAAANACQAAABmMGYyN2YwZS04NTdkLTRhNzEtYTRkYS0zMmNlY2FlM2E5NzgSAAEAAAALAAAAaW50ZXJhY3RpdmUwAAA_N16POddINwBNPPof2qbfTIKfNu5-qKQO.l_uW40yQUzVmw-rSKGTTEkgwUM7pHlSyvfKEFaXnxAeiY-QDuovS2KsGxfwmtzBzlvcEtuD36Btw9XvhX0L7tI1CO0VxHTk_yipuuLSlXkel6wVNvuNV9zZljP7Xgmq9oumDEDgoyh55Nlyz96cYH8PHbNan8oNwTfP9KAe8MDUVbADjVWiqJlX_scg7w7_oEnJsb7TiXGy8X4xyq2jYlveKRSkO30tYDTj66UgdcQ-aQT2hlcfDDQpcabo2UB6B1-7iKH3MBYTIxsLnKg3Cmbn2nEoIY-iNtMOU5f-FnWS5p4rw-P7hDVmEcIVrh51TOTJM-hu9cLKcp-JvDef-yA'
 account_id = '8999292'
+
 # Recipient Information:
 signer_name = 'Rafael Reif'
 signer_email = 'jamsabot@gmail.com'
@@ -15,17 +19,25 @@ signer_email = 'jamsabot@gmail.com'
 file_name_path = 'documents/resignation.pdf'
 # The url of this web application
 base_url = 'http://localhost:5000'
-client_user_id = '123' # Used to indicate that the signer will use an embedded
-                       # Signing Ceremony. Represents the signer's userId within
-                       # your application.
-authentication_method = 'None' # How is this application authenticating
-                               # the signer? See the `authenticationMethod' definition
-                               # https://developers.docusign.com/esign-rest-api/reference/Envelopes/EnvelopeViews/createRecipient
+client_user_id = '123'  # Used to indicate that the signer will use an embedded
+# Signing Ceremony. Represents the signer's userId within
+# your application.
+authentication_method = 'None'  # How is this application authenticating
+# the signer? See the `authenticationMethod' definition
+# https://developers.docusign.com/esign-rest-api/reference/Envelopes/EnvelopeViews/createRecipient
 
 # The API base_path
 base_path = 'https://demo.docusign.net/restapi'
 
-import os 
+master_dict = {"sex_offender": ["Jeff Epstein"], "racists": ["Alfred Sloan"],
+               "fossil_fuels": ["David Koch", "Charles Koch"], "rich_assholes": ["Jeff Bezos"],
+               "war_criminals": ["Henry Kisinger"]}
+
+all_good_page = '''
+        <html lang="en"><body><p>You're good. For now...</p></body>
+        '''
+
+import os
 
 # Set FLASK_ENV to development if it is not already set
 if 'FLASK_ENV' not in os.environ:
@@ -33,6 +45,7 @@ if 'FLASK_ENV' not in os.environ:
 
 # Constants
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
+
 
 def embedded_signing_ceremony():
     """
@@ -48,37 +61,37 @@ def embedded_signing_ceremony():
     with open(os.path.join(APP_PATH, file_name_path), "rb") as file:
         content_bytes = file.read()
     base64_file_content = base64.b64encode(content_bytes).decode('ascii')
-    
+
     # Create the document model
-    document = Document( # create the DocuSign document object 
-        document_base64 = base64_file_content, 
-        name = 'Example document', # can be different from actual file name
-        file_extension = 'pdf', # many different document types are accepted
-        document_id = 1 # a label used to reference the doc
+    document = Document(  # create the DocuSign document object
+        document_base64=base64_file_content,
+        name='Example document',  # can be different from actual file name
+        file_extension='pdf',  # many different document types are accepted
+        document_id=1  # a label used to reference the doc
     )
 
     # Create the signer recipient model 
-    signer = Signer( # The signer
-        email = signer_email, name = signer_name, recipient_id = "1", routing_order = "1",
-        client_user_id = client_user_id, # Setting the client_user_id marks the signer as embedded
+    signer = Signer(  # The signer
+        email=signer_email, name=signer_name, recipient_id="1", routing_order="1",
+        client_user_id=client_user_id,  # Setting the client_user_id marks the signer as embedded
     )
 
     # Create a sign_here tab (field on the document)
-    sign_here = SignHere( # DocuSign SignHere field/tab
-        document_id = '1', page_number = '1', recipient_id = '1', tab_label = 'SignHereTab',
-        x_position = '195', y_position = '147')
+    sign_here = SignHere(  # DocuSign SignHere field/tab
+        document_id='1', page_number='1', recipient_id='1', tab_label='SignHereTab',
+        x_position='195', y_position='147')
 
     # Add the tabs model (including the sign_here tab) to the signer
-    signer.tabs = Tabs(sign_here_tabs = [sign_here]) # The Tabs object wants arrays of the different field/tab types
+    signer.tabs = Tabs(sign_here_tabs=[sign_here])  # The Tabs object wants arrays of the different field/tab types
 
     # Next, create the top level envelope definition and populate it.
     envelope_definition = EnvelopeDefinition(
-        email_subject = "Please sign this document sent from the Python SDK",
-        documents = [document], # The order in the docs array determines the order in the envelope
-        recipients = Recipients(signers = [signer]), # The Recipients object wants arrays for each recipient type
-        status = "sent" # requests that the envelope be created and sent.
+        email_subject="Please sign this document sent from the Python SDK",
+        documents=[document],  # The order in the docs array determines the order in the envelope
+        recipients=Recipients(signers=[signer]),  # The Recipients object wants arrays for each recipient type
+        status="sent"  # requests that the envelope be created and sent.
     )
-    
+
     #
     #  Step 2. Create/send the envelope.
     #
@@ -95,38 +108,46 @@ def embedded_signing_ceremony():
     #
     envelope_id = results.envelope_id
     recipient_view_request = RecipientViewRequest(
-        authentication_method = authentication_method, client_user_id = client_user_id,
-        recipient_id = '1', return_url = base_url + '/dsreturn',
-        user_name = signer_name, email = signer_email
+        authentication_method=authentication_method, client_user_id=client_user_id,
+        recipient_id='1', return_url=base_url + '/dsreturn',
+        user_name=signer_name, email=signer_email
     )
 
     results = envelope_api.create_recipient_view(account_id, envelope_id,
-        recipient_view_request = recipient_view_request)
-    
+                                                 recipient_view_request=recipient_view_request)
+
     #
     # Step 4. The Recipient View URL (the Signing Ceremony URL) has been received.
     #         Redirect the user's browser to it.
     #
     return results.url
 
-def map(tag):
-    switch(tag):
-        case "sex_offender":
-            return ["Jeff Epstein"]
-        case "racists":
-            return ["Alfred Sloan"]
-        case "fossil_fuels":
-            return ["David Koch", "Charles Koch"]
-        case "rich_assholes":
-            return ["Jeff Bezos"]
-        case "war_criminals":
-            return ["Henry Kisinger"]
+
 def search(keyword):
-    return 0
+    matched_documents = []
+    raw_text = get_documents.get_doc_text()
+    to_find = master_dict[keyword]
+    for text in raw_text:
+        for word in to_find:
+            matches = [m.start() for m in re.finditer(word, text[1])]
+            if matches is not None:
+                matched_documents.append((word, matches))
+
+    return matched_documents
+
+def search_all():
+    all_keys = []
+    for key in master_dict:
+        result = search(key)
+        if result is not None:
+            all_keys.append(result)
+
+    return all_keys
 
 
 # Mainline
 app = Flask(__name__)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def homepage():
@@ -134,6 +155,8 @@ def homepage():
         return redirect(embedded_signing_ceremony(), code=302)
     else:
         return render_template("home.html", url=request.url)
+
+
 @app.route('/dsreturn', methods=['GET'])
 def dsreturn():
     return '''
@@ -142,5 +165,23 @@ def dsreturn():
           <p>This page can also implement post-signing processing.</p></body>
     '''.format(event=request.args.get('event'))
 
-app.run()
 
+@app.route('/keyword', methods=['GET'])
+def keyword():
+    print("searching for {}".format((request.args.get('keyword'))))
+    found_keys = search(request.args.get('keyword'))
+    if len(found_keys) == 0:
+        return all_good_page
+    else:
+        return render_template("keyword.html", found_keys=str(found_keys))
+
+# @app.route('/checkall', methods=['GET', 'POST'])
+# def checkall():
+#     all_keys = search_all()
+#     if len(all_keys) == 0:
+#         return all_good_page
+#     else:
+#         return render_template("keyword.html", found_keys=str(all_keys))
+
+
+app.run()
