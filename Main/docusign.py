@@ -6,8 +6,11 @@ import base64, os
 from flask import Flask, request, render_template, redirect
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients, Document, \
     RecipientViewRequest
-import get_documents
 import re
+import pendulum
+import tika
+tika.initVM()
+from tika import parser
 
 access_token = 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQoAAAABAAUABwCA1c9ejznXSAgAgBXzbNI510gCAMvVYBwvyIxFgkVCFpMeHV8VAAEAAAAYAAkAAAAFAAAAKwAAAC0AAAAvAAAAMQAAADIAAAA4AAAAMwAAADUAAAANACQAAABmMGYyN2YwZS04NTdkLTRhNzEtYTRkYS0zMmNlY2FlM2E5NzgSAAEAAAALAAAAaW50ZXJhY3RpdmUwAAA_N16POddINwBNPPof2qbfTIKfNu5-qKQO.l_uW40yQUzVmw-rSKGTTEkgwUM7pHlSyvfKEFaXnxAeiY-QDuovS2KsGxfwmtzBzlvcEtuD36Btw9XvhX0L7tI1CO0VxHTk_yipuuLSlXkel6wVNvuNV9zZljP7Xgmq9oumDEDgoyh55Nlyz96cYH8PHbNan8oNwTfP9KAe8MDUVbADjVWiqJlX_scg7w7_oEnJsb7TiXGy8X4xyq2jYlveKRSkO30tYDTj66UgdcQ-aQT2hlcfDDQpcabo2UB6B1-7iKH3MBYTIxsLnKg3Cmbn2nEoIY-iNtMOU5f-FnWS5p4rw-P7hDVmEcIVrh51TOTJM-hu9cLKcp-JvDef-yA'
 account_id = '8999292'
@@ -32,10 +35,6 @@ base_path = 'https://demo.docusign.net/restapi'
 master_dict = {"sex_offender": ["Jeff Epstein", "Donald Trump"], "racists": ["Alfred Sloan", "Ted Cruz"],
                "fossil_fuels": ["David Koch", "Charles Koch"], "rich_assholes": ["Jeff Bezos", "Warren Buffet", "Giorgio Armani"],
                "war_criminals": ["Henry Kissinger", "Stephen A. Schwarzman"]}
-
-all_good_page = '''
-        <html lang="en"><body><p>You're good. For now...</p></body>
-        '''
 
 import os
 
@@ -125,7 +124,7 @@ def embedded_signing_ceremony():
 
 def search(keyword):
     matched_documents = []
-    raw_text = get_documents.get_doc_text()
+    raw_text = get_doc_text()
     to_find = master_dict[keyword]
     for text in raw_text:
         for word in to_find:
@@ -144,6 +143,57 @@ def search_all():
 
     return all_keys
 
+def list_envelopes():
+    """
+    Lists the user's envelopes created in the last 10 days
+    """
+
+    #
+    # Step 1. Prepare the options object
+    #
+    from_date = pendulum.now().subtract(days=10).to_iso8601_string()
+    #
+    # Step 2. Get and display the results
+    #
+    api_client = ApiClient()
+    api_client.host = base_path
+    api_client.set_default_header("Authorization", "Bearer " + access_token)
+
+    envelope_api = EnvelopesApi(api_client)
+    results = envelope_api.list_status_changes(account_id, from_date=from_date)
+    return results
+
+def get_envelopes_api():
+    """
+       Lists the user's envelopes created in the last 10 days
+       """
+
+
+    #
+    # Step 2. Get and display the results
+    #
+    api_client = ApiClient()
+    api_client.host = base_path
+    api_client.set_default_header("Authorization", "Bearer " + access_token)
+
+    envelope_api = EnvelopesApi(api_client)
+    return envelope_api
+
+def get_doc_text():
+    to_ret = []
+    env_api = get_envelopes_api()
+    #
+    # Step 1. Prepare the options object
+    #
+    from_date = pendulum.now().subtract(days=10).to_iso8601_string()
+    status_changes = env_api.list_status_changes(account_id, from_date=from_date)
+    for env in status_changes.envelopes:
+        combined = env_api.get_document(account_id, 'combined', env.envelope_id)
+        parsed = parser.from_file(combined)
+        to_ret.append((env.envelope_id ,parsed['content']))
+        print(parsed['content'])
+
+    return to_ret
 
 # Mainline
 app = Flask(__name__)
@@ -171,7 +221,7 @@ def keyword():
     print("searching for {}".format((request.args.get('keyword'))))
     found_keys = search(request.args.get('keyword'))
     if len(found_keys) == 0:
-        return all_good_page
+        return render_template("allgood.html")
     else:
         return render_template("keyword.html", found_keys=str(found_keys))
 
