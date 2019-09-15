@@ -1,0 +1,62 @@
+/*!
+ * Bootstrap v3.1.1 (http://getbootstrap.com)
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+/*! normalize.css v3.0.0 | MIT License | git.io/normalize */
+@font-face {
+  font-family: 'neue-einstellung';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./fonts/NeueEinstellung/OTF/NeueEinstellung-Regular.otf)format("opentype"),
+  url(./fonts/NeueEinstellung/TTF/NeueEinstellung-Regular.ttf);
+}
+
+@font-face{
+  font-family: 'neue-einstellung';
+  font-style: normal;
+  font-weight: 600;
+  src: url(./fonts/NeueEinstellung/OTF/NeueEinstellung-SemiBold.otf)format("opentype"),
+  url(./fonts/NeueEinstellung/TTF/NeueEinstellung-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: 'neue-einstellung';
+  font-style: normal;
+  font-weight: 800;
+  src: url(./fonts/NeueEinstellung/OTF/NeueEinstellung-Bold.otf)format("opentype"),
+  url(./fonts/NeueEinstellung/TTF/NeueEinstellung-Bold.ttf);
+}
+
+html {
+  font-family: 'neue-einstellung';
+  -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+} 
+body {
+  margin: 0;
+  font-family: 'neue-einstellung';
+}
+
+h1 {
+  font-family: 'neue-einstellung';
+  font-style:normal;
+  font-weight: 600;
+  font-size: 50px;
+  letter-spacing: 1px;
+}
+
+h2 {
+  font-style:normal;
+  font-weight: 600;
+  font-size: 40px;
+  letter-spacing: 3px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+h3{
+  font-size:25px;
+  font-weight:600;
+}

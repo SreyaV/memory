@@ -2,30 +2,140 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel='stylesheet' href="../static/styles/bootstrap.css">
-    <link rel='stylesheet' href="../static/styles/base.css">
-    <link rel='stylesheet' href="../static/styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+* {
+  box-sizing: border-box;
+}
+
+form.example input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 80%;
+  background: #f1f1f1;
+}
+
+form.example button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
+}
+
+form.example button:hover {
+  background: #0b7dda;
+}
+
+form.example::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+  .navbar {
+    overflow: hidden;
+    background-color: #80a0ff;
+  }
+
+  .navbar a {
+    float: left;
+    font-size: 16px;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+  .dropdown {
+    float: left;
+    overflow: hidden;
+  }
+
+  .dropdown .dropbtn {
+    font-size: 16px;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+  }
+
+  .navbar a:hover, .dropdown:hover .dropbtn {
+    background-color: red;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+
+  .dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #ddd;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  </style>
+
 </head>
 <body>
-	<div class="nav-container">
-		<a class="cs_top_menu_item" href="{resign_url}">Send Resignation Letter</a>
-		<div class="dropdown" onmouseleave="clearMenu(this);">
-			<label class="dropbtn cs_top_menu_item" for="cs_menu_ede981f2f036360ae0e3e75985c10e4b">Make Someone Else Resign Intead!<span class="downarrow">▼</span></label>
-			<input checked="false" class="dropdown-checkbox" id="cs_menu_ede981f2f036360ae0e3e75985c10e4b" type="checkbox">
-			<div class="dropdown-content">
-				<a class="cs_top_menu_item" href="./generic_resign/Joi/Ito">Joi Ito</a>
-				<a class="cs_top_menu_item" href="./generic_resign/Seth/Lloyd">Seth Lloyd</a>
-				<a class="cs_top_menu_item" href="./generic_resign/Richard/Stallman}">Richard Stallman</a>
-				<a class="cs_top_menu_item" href="./generic_resign/Robert/Millard}">Robert Millard</a>
-			</div>	
-		</div>
-	</div>
-<form action="{{ url }}" method="post">
-    <input type="submit" value="Sign Resignation Letter"
-           style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
-</form>
 
+  <div class="navbar">
+    <a href="./resign">Sign Resignation Letter</a>
+  <div class="dropdown">
+    <button class="dropbtn">Make Someone Else Resign Intead!
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a class="cs_top_menu_item" href="./generic_resign/Joi/Ito">Joi Ito</a>
+      <a class="cs_top_menu_item" href="./generic_resign/Seth/Lloyd">Seth Lloyd</a>
+      <a class="cs_top_menu_item" href="./generic_resign/Richard/Stallman}">Richard Stallman</a>
+      <a class="cs_top_menu_item" href="./generic_resign/Robert/Millard}">Robert Millard</a>
+    </div>
+  </div>
+</div>
+<br>
+<form class="example" action="search">
+  <input type="text" placeholder="Search.." name="keyword">
+  <button type="submit"><i class="fa fa-search"></i></button>
+</form>
+Tags: <a href="">Sex Offenders</a>, <a href="">Racists</a>, <a href="">Fossil Fuels</a>, <a href=""> War Criminals </a>
+
+
+{% if search|length > 0%}
+    <p>Searching for {{search}}</p>
+    {% if found_docs|length > 0%}
+      {{found_docs}}
+    {% else %}
+    <p>No results found. You're safe... for now.</p>
+    {% endif %}
+{% endif %}
 
 <!--
 

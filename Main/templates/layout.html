@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        {% block head %}
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel='stylesheet' href="../static/styles/layout.css">
+        <style>
+
+            /* **************** */
+            /* General Settings */
+            /* **************** */
+
+            h1 {
+                color: {{colors.h1}};
+                font-weight: 800;
+            }
+
+            h2 {
+                color: {{colors.h2}};
+            }
+
+            .description {
+              display: inline-block;
+              width: 60%;
+            }
+
+            a {
+              text-decoration: none;
+              color: {{colors.link}};
+            }
+
+            .common {
+                font-family: 'neue-einstellung','Karla', sans-serif;
+            }
+
+
+            /* *************** */
+            /* Navbar Settings */
+            /* *************** */
+
+            #topbar {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                background-color: white;
+                height:60px;
+                font-weight: 600;
+            }
+
+            /* Navbar Logo */
+            #navbar_logo {
+                padding: 10px 15px 0px 15px;
+            }
+            #navbar_logo:hover{
+                opacity: 0.8;
+            }
+            #navbar_logo img{
+                height: 35px;
+            }
+
+            /* Navbar Links */
+            #navbar {
+                margin-left: auto;
+            }
+            #navbar a {
+                display: inline-block;
+                color: {{colors.navbar_nonactive}};
+                text-align: center;
+                padding: 14px 15px ;
+                text-decoration: none;
+            }
+            #navbar a:hover {
+                color: {{colors.navbar_active}};
+            }
+
+            /* hide hamburger */
+            #dropdown {
+                display: none;
+            }
+
+            /* DROPDOWN SETTINGS (Mobile) */
+            @media only screen and (max-width: 800px) {
+                #navbar {
+                    display: none;
+                }
+
+                /* Dropdown Icon */
+                #dropdown {
+                    display: block;
+                    margin-left: auto;
+                }
+                #dropbtn {
+                    background-color: white;
+                    padding: 16px;
+                    border: none;
+                    cursor: pointer;
+                    margin: 0px 20px 0px 20px;
+                }
+                #dropbtn :hover {
+                    opacity: 0.6;
+                }
+                #dropbtn i {
+                    font-size: 30px;
+                }
+
+                /* Dropdown show contents */
+                .dropdown-content {
+                    display: none;
+                    position: absolute;
+                    background-color: white;
+                    overflow: auto;
+                    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                    z-index: 1;
+                    text-align: right;
+                }
+
+                .dropdown-content a {
+                    color: {{colors.navbar_nonactive}};
+                    padding: 12px 16px;
+                    text-decoration: none;
+                    display: block;
+                }
+
+                #dropdown a:hover {
+                    color: {{colors.navbar_active}};
+                }
+
+                .show {
+                    display: block;
+                }
+
+            }
+
+
+            /* The sticky class is added to the navbar with JS when it reaches its scroll position */
+            .sticky {
+                position: -webkit-sticky;
+                position: sticky;
+                top: 0;
+            }
+
+
+
+            /* *************** */
+            /* Footer Settings */
+            /* *************** */
+            footer {
+                color: white;
+                width: 100%;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                background-color: {{colors.footer}};
+            }
+            footer p {
+                margin: 12px;
+            }
+
+            footer #left {
+                width: 33%;
+            }
+            footer #center {
+                width: 34%;
+                text-align: center;
+            }
+            footer #right {
+                width: 33%;
+                text-align: right;
+            }
+
+
+            /* ************ */
+            /* Social Icons */
+            /* ************ */
+
+            #social_wrapper {
+                padding-right: 10px;
+            }
+            .fab, .fas {
+                padding: 10px;
+                margin: 5px 4px;
+                color: {{colors.footer}};
+                font-size: 15px;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 50%;
+                background: white;
+            }
+            .fab:hover, .fas:hover {
+                opacity: 0.9;
+            }
+
+
+            @media only screen and (max-width: 800px) {
+                footer {
+                    flex-direction: column;
+                    height: 100px;
+                }
+                footer #left {
+                    width: 0%;
+                }
+                footer #center {
+                    width: 100%;
+                }
+                footer #right {
+                    width: 100%;
+                    text-align: center;
+                }
+
+                #social_wrapper {
+                    padding-right: 0px;
+                }
+
+                .fa {
+                    padding: 7px;
+                    font-size: 14px;
+                    width: 14px;
+                    margin: 0px 4px;
+                }
+            }
+
+            /* *************** */
+            /* Events CSS */
+            /* *************** */
+            	.events-table {
+          	    clear: both;
+          	    list-style-type: none;
+          	    margin-top: 12px !important;
+          	    margin-right: 0px !important;
+          	    margin-bottom: 0px !important;
+          	    margin-left: 0px !important;
+          	    padding-left: 0;
+                border-collapse:collapse;
+                width: 100%;
+
+          		}
+          		.events-table tr {
+          		    padding-bottom: .5rem;
+          		    padding-top: .5rem;
+          		    text-align: left;
+          		    vertical-align: middle;
+          		}
+          		.events-table td {
+          		    padding-left: 5px;
+          		    padding-right: 5px;
+                  border-bottom: 1px solid rgba(215,215,215,0.7);
+                  border-top: 1px solid rgba(215,215,215,0.7);
+
+          		}
+
+          		.icon {
+          		    vertical-align:middle;
+          		    margin-left: auto;
+          		    margin-right: auto;
+          		}
+
+          		.icon-span {
+          		    width:25px;
+          		    height:25px;
+          		    vertical-align:middle;
+          		    display: inline-block;
+          		}
+
+          		.events_padding {
+          		    width:100%;
+          		    padding:20px;
+          		}
+
+          		.no-events-text {
+          			text-align: center;
+          		}
+              .calendar {
+                display: block;
+                width: 90%;
+                margin: 20px 20px 20px 20px;
+              }
+
+              .past-event {
+                  opacity: .32;
+              }
+            /* *************** */
+            /* --------------- */
+            /* *************** */
+
+            .nothing {
+                color: white;
+            }
+
+        </style>
+
+        <script>
+
+            /*
+            FEATURE: Highlighting the link on the navbar for the page you are currently on
+            */
+
+            var url = location.href;
+            var url_split = url.split('/');
+            if (url_split[url_split.length - 1] == ""){
+                url_split.pop();
+            }
+            var link_ending = url_split[url_split.length - 1];
+            console.log(link_ending); //ex: "redesign", "home", "about"
+
+            $( document ).ready(function() {
+                $("#navbar").children("ul").children("li").children("a").each(function() {
+                    var nav_link = ($(this).attr("href"));
+                    if (nav_link.includes(link_ending)) {
+                        console.log(nav_link);
+                        $(this).css("color", "{{colors.navbar_active}}");
+                    }
+                });
+            });
+
+            /*
+            FEATURE: Clicking hamburger icon will show dropdown content
+            */
+            $( document ).ready(function() {
+                document.getElementById("dropbtn").onclick = function(){
+                    document.getElementById("myDropdown").classList.toggle("show");
+                }
+            });
+
+        </script>
+
+
+        {% endblock %}
+
+    </head>
+    <body>
+
+        <!-- Topbar -->
+        <div id="topbar" class="sticky">
+
+            <!-- Navbar Logo -->
+            <div id="navbar_logo">
+                <a href="./">
+                    <img src="{{url_for('static', filename='images/logos/navbar_logo.svg')}}">
+                </a>
+            </div>
+
+            <!-- Navbar Links (Normal and Mobile versions) -->
+            <div id="navbar">
+                <a href="./">home</a>
+                <!-- <a href="./events">events</a> -->
+                <a href="./partners">partners</a>
+                <a href="./team">team</a>
+                <a href="./contact">contact</a>
+            </div>
+            <div id="dropdown">
+                <button id="dropbtn">
+                    <!-- <img src="{{url_for('static', filename='images/hamburger_icon.svg')}}"> -->
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="./">home</a>
+                    <!-- <a href="./events">events</a> -->
+                    <a href="./partners">partners</a>
+                    <a href="./team">team</a>
+                    <a href="./contact">contact</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Content -->
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- Footer -->
+        <!-- <footer>
+
+            <div id="left">
+            </div><div id="center">
+                <p class="common">
+                    @ 2019 StartLabs
+                </p>
+            </div><div id="right">
+                <div id="social_wrapper">
+                    <a href="#" class="fab fa-facebook"></a>
+                    <a href="#" class="fab fa-twitter"></a>
+                    <a href="#" class="fab fa-linkedin"></a>
+                    <a href="#" class="fab fa-youtube"></a>
+                    <a href="#" class="fas fa-envelope"></a>
+                    <a href="#" class="placeholder"></a>
+                </div>
+            </div>
+        </footer> -->
+
+    </body>
+
+</html>

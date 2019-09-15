@@ -7,12 +7,12 @@ from flask import Flask, request, render_template, redirect
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients, Document, \
     RecipientViewRequest
 import re
-import pendulum
+import datetime
 import tika
 tika.initVM()
 from tika import parser
 
-access_token = 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQoAAAABAAUABwCA1c9ejznXSAgAgBXzbNI510gCAMvVYBwvyIxFgkVCFpMeHV8VAAEAAAAYAAkAAAAFAAAAKwAAAC0AAAAvAAAAMQAAADIAAAA4AAAAMwAAADUAAAANACQAAABmMGYyN2YwZS04NTdkLTRhNzEtYTRkYS0zMmNlY2FlM2E5NzgSAAEAAAALAAAAaW50ZXJhY3RpdmUwAAA_N16POddINwBNPPof2qbfTIKfNu5-qKQO.l_uW40yQUzVmw-rSKGTTEkgwUM7pHlSyvfKEFaXnxAeiY-QDuovS2KsGxfwmtzBzlvcEtuD36Btw9XvhX0L7tI1CO0VxHTk_yipuuLSlXkel6wVNvuNV9zZljP7Xgmq9oumDEDgoyh55Nlyz96cYH8PHbNan8oNwTfP9KAe8MDUVbADjVWiqJlX_scg7w7_oEnJsb7TiXGy8X4xyq2jYlveKRSkO30tYDTj66UgdcQ-aQT2hlcfDDQpcabo2UB6B1-7iKH3MBYTIxsLnKg3Cmbn2nEoIY-iNtMOU5f-FnWS5p4rw-P7hDVmEcIVrh51TOTJM-hu9cLKcp-JvDef-yA'
+access_token = 'eyJ0eXAiOiJNVCIsImFsZyI6IlJTMjU2Iiwia2lkIjoiNjgxODVmZjEtNGU1MS00Y2U5LWFmMWMtNjg5ODEyMjAzMzE3In0.AQoAAAABAAUABwAAgjKm4DnXSAgAAMJVtCM610gCAMvVYBwvyIxFgkVCFpMeHV8VAAEAAAAYAAkAAAAFAAAAKwAAAC0AAAAvAAAAMQAAADIAAAA4AAAAMwAAADUAAAANACQAAABmMGYyN2YwZS04NTdkLTRhNzEtYTRkYS0zMmNlY2FlM2E5NzgSAAEAAAALAAAAaW50ZXJhY3RpdmUwAABVAaXgOddINwBNPPof2qbfTIKfNu5-qKQO.oWM1aRxTRfM5lb4JSwgFwAAjXR9rXE6d0S9K0dAjsIoPvVp45Qn_64oc2EiJ55DSmVPPHlW6ZUY4CBsqCw3EO80oEFJj_N9mvbty-NfeKt6Q28NNYT-PAAIMAprmH3i-IkM6n9gkrT30X_V4w7mJ7RefBc0452VIDzavfpYSFOTcDza-i5dLTvE60ZTwvBkUXtW6s9oXabuQWnfvSKvH4qT5jFrLQAeVbzEdYUVVQKvnWNjlu0ZMjnxZFN0E1XY8ysGSO-v_Z9QtKM-SR4lm8pjl1vN-_OvoN_cfXw_Kd4hsTS5PLL3l2h_CVlIh_t00lv850p3qCZemeF37HZqMjA'
 account_id = '8999292'
 
 # Recipient Information:
@@ -69,7 +69,7 @@ def embedded_signing_ceremony():
         document_id=1  # a label used to reference the doc
     )
 
-    # Create the signer recipient model 
+    # Create the signer recipient model
     signer = Signer(  # The signer
         email=signer_email, name=signer_name, recipient_id="1", routing_order="1",
         client_user_id=client_user_id,  # Setting the client_user_id marks the signer as embedded
@@ -77,8 +77,8 @@ def embedded_signing_ceremony():
 
     # Create a sign_here tab (field on the document)
     sign_here = SignHere(  # DocuSign SignHere field/tab
-        document_id='1', page_number='1', recipient_id='1', tab_label='SignHereTab',
-        x_position='195', y_position='147')
+        document_id='1', page_number='2', recipient_id='1', tab_label='SignHereTab',
+        x_position='100', y_position='250')
 
     # Add the tabs model (including the sign_here tab) to the signer
     signer.tabs = Tabs(sign_here_tabs=[sign_here])  # The Tabs object wants arrays of the different field/tab types
@@ -122,12 +122,11 @@ def embedded_signing_ceremony():
     return results.url
 
 
-def search(keyword):
+def search(keywords):
     matched_documents = []
     raw_text = get_doc_text()
-    to_find = master_dict[keyword]
     for text in raw_text:
-        for word in to_find:
+        for word in keywords:
             matches = [m.start() for m in re.finditer(word, text[1])]
             if matches is not None:
                 matched_documents.append((word, matches))
@@ -151,7 +150,7 @@ def list_envelopes():
     #
     # Step 1. Prepare the options object
     #
-    from_date = pendulum.now().subtract(days=10).to_iso8601_string()
+    from_date = datetime.datetime.min.isoformat()
     #
     # Step 2. Get and display the results
     #
@@ -185,7 +184,7 @@ def get_doc_text():
     #
     # Step 1. Prepare the options object
     #
-    from_date = pendulum.now().subtract(days=10).to_iso8601_string()
+    from_date = datetime.datetime.min.isoformat()
     status_changes = env_api.list_status_changes(account_id, from_date=from_date)
     for env in status_changes.envelopes:
         combined = env_api.get_document(account_id, 'combined', env.envelope_id)
@@ -199,12 +198,13 @@ def get_doc_text():
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def homepage():
-    if request.method == 'POST':
-        return redirect(embedded_signing_ceremony(), code=302)
-    else:
-        return render_template("home.html", url=request.url)
+    return render_template("home.html", search="", found_docs="")
+
+@app.route('/resign', methods=['GET'])
+def resign():
+    return redirect(embedded_signing_ceremony(), code=302)
 
 
 @app.route('/dsreturn', methods=['GET'])
@@ -216,14 +216,15 @@ def dsreturn():
     '''.format(event=request.args.get('event'))
 
 
-@app.route('/keyword', methods=['GET'])
+@app.route('/search', methods=['GET'])
 def keyword():
-    print("searching for {}".format((request.args.get('keyword'))))
-    found_keys = search(request.args.get('keyword'))
+    keywords = request.args.get('keyword')
+    print("searching for {}".format(keywords))
+    found_keys = search(keywords)
     if len(found_keys) == 0:
-        return render_template("allgood.html")
+        return render_template("home.html", search=keywords, found_docs="")
     else:
-        return render_template("keyword.html", found_keys=str(found_keys))
+        return render_template("home.html", search=keywords, found_docs=str(found_keys))
 
 # @app.route('/checkall', methods=['GET', 'POST'])
 # def checkall():
