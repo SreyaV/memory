@@ -29,9 +29,9 @@ authentication_method = 'None'  # How is this application authenticating
 # The API base_path
 base_path = 'https://demo.docusign.net/restapi'
 
-master_dict = {"sex_offender": ["Jeff Epstein"], "racists": ["Alfred Sloan"],
-               "fossil_fuels": ["David Koch", "Charles Koch"], "rich_assholes": ["Jeff Bezos"],
-               "war_criminals": ["Henry Kisinger"]}
+master_dict = {"sex_offender": ["Jeff Epstein", "Donald Trump"], "racists": ["Alfred Sloan", "Ted Cruz"],
+               "fossil_fuels": ["David Koch", "Charles Koch"], "rich_assholes": ["Jeff Bezos", "Warren Buffet", "Giorgio Armani"],
+               "war_criminals": ["Henry Kissinger", "Stephen A. Schwarzman"]}
 
 all_good_page = '''
         <html lang="en"><body><p>You're good. For now...</p></body>
