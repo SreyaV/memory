@@ -2,15 +2,32 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel='stylesheet' href="../static/styles/bootstrap.css">
+    <link rel='stylesheet' href="../static/styles/base.css">
+    <link rel='stylesheet' href="../static/styles/main.css">
 </head>
 <body>
+	<div class="nav-container">
+		<a class="cs_top_menu_item" href="{resign_url}">Send Resignation Letter</a>
+		<div class="dropdown" onmouseleave="clearMenu(this);">
+			<label class="dropbtn cs_top_menu_item" for="cs_menu_ede981f2f036360ae0e3e75985c10e4b">Make Someone Else Resign Intead!<span class="downarrow">▼</span></label>
+			<input checked="false" class="dropdown-checkbox" id="cs_menu_ede981f2f036360ae0e3e75985c10e4b" type="checkbox">
+			<div class="dropdown-content">
+				<a class="cs_top_menu_item" href="./generic_resign/Joi/Ito">Joi Ito</a>
+				<a class="cs_top_menu_item" href="./generic_resign/Seth/Lloyd">Seth Lloyd</a>
+				<a class="cs_top_menu_item" href="./generic_resign/Richard/Stallman}">Richard Stallman</a>
+				<a class="cs_top_menu_item" href="./generic_resign/Robert/Millard}">Robert Millard</a>
+			</div>	
+		</div>
+	</div>
 <form action="{{ url }}" method="post">
     <input type="submit" value="Sign Resignation Letter"
            style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
 </form>
+
+
+<!--
 
 <form action="/keyword" method="get">
     Keyword: <input type="text" name="keyword"><br>
@@ -21,7 +38,7 @@
     <input type="submit" value="Check all keywords"
            style="width:13em;height:2em;background:#1f32bb;color:white;font:bold 1.5em arial;margin: 3em;"/>
 </form>
-
+-->
 </body>
 
 </html>

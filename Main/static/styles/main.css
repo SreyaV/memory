@@ -1,0 +1,69 @@
+.nav-container {
+	background-color:#33cded;
+}
+
+.critical {
+ width:90%;
+ padding:5px;
+ margin-top:10px;
+ margin-bottom:10px;
+ margin-right:auto;
+ margin-left:auto;
+ /*background-color: #FFD9D9;*/
+ color: red;
+  font-style: italic;
+
+ /*border-color: #FF0000;*/
+ /*border-style: solid;*/
+ /*border-width: 1px;*/
+ /*border-radius: 10px;*/
+ text-align: justify;
+
+}
+.critical:before {
+  content: "IMPORTANT: ";
+  font-weight: bold;
+}
+
+.critical a{
+  color: red;
+  text-decoration: underline;
+}
+
+.critical a:hover{
+  background-color: red;
+  color: white;
+}
+
+.note {
+ width:90%;
+ padding:5px;
+ margin-top:10px;
+ margin-bottom:10px;
+ margin-right:auto;
+ margin-left:auto;
+ /*background-color: #ccffff;*/
+ font-style: italic;
+ color: DodgerBlue;
+ /*border-color: #000000;*/
+ /*border-style: solid;*/
+ /*border-width: 1px;*/
+ /*border-radius: 10px;*/
+ text-align: justify;
+
+}
+
+.note:before{
+  content: "NOTE: ";
+  font-weight: bold;
+}
+
+.note a{
+  color: DodgerBlue;
+  text-decoration: underline;
+}
+
+.note a:hover{
+  background-color: DodgerBlue;
+  color: white;
+}
