@@ -222,7 +222,7 @@ def keyword():
     print("searching for {}".format(keywords))
     found_keys = search(keywords.split(' '))
 
-    if len(found_keys) == 0:
+    if len(found_keys) == 0 or len(keywords)==0:
         return render_template("home.html", search=keywords, found_docs="")
     else:
         return render_template("home.html", search=keywords, found_docs="{}".format(found_keys[1][1]))
