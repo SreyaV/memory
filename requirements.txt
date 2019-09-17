@@ -1,6 +1,7 @@
 cachetools==3.1.0
 Click==7.0
 Flask==1.0.2
+Flask-OAuthlib==0.9.5
 docusign-esign==2.0.1
 flup==1.0.3
 httplib2==0.12.1
@@ -11,5 +12,6 @@ pyasn1==0.4.5
 pyasn1-modules==0.2.4
 rsa==4.0
 six==1.12.0
+tika==1.19
 uritemplate==3.0.0
 Werkzeug==0.14.1
